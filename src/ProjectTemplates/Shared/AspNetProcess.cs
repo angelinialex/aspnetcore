@@ -249,6 +249,9 @@ namespace Templates.Test.Helpers
         internal Task<HttpResponseMessage> SendRequest(string path) =>
             RetryHelper.RetryRequest(() => _httpClient.GetAsync(new Uri(ListeningUri, path)), logger: NullLogger.Instance);
 
+        internal Task<HttpResponseMessage> SendRequest(Func<HttpRequestMessage> requestFactory)
+            => RetryHelper.RetryRequest(() => _httpClient.SendAsync(requestFactory()), logger: NullLogger.Instance);
+
         public async Task AssertStatusCode(string requestUrl, HttpStatusCode statusCode, string acceptContentType = null)
         {
             var response = await RetryHelper.RetryRequest(() =>
